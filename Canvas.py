@@ -5,6 +5,7 @@ import math
 INTERVAL = 25
 SIZE = 2
 MASS = 5
+G = 1000
 TARGET = Point.Point(400, 400)
 
 class Canvas(tk.Frame):
@@ -15,7 +16,7 @@ class Canvas(tk.Frame):
     def init_ui(self):
         self.pack(fill= 'both', expand= True)
 
-        self.left_pane = tk.Frame(self, bg="green", width=200)
+        self.left_pane = tk.Frame(self, width=200)
         self.left_pane.pack(anchor='w', fill='y', expand=False, side='left')
         self.create_frame(self.left_pane)
 
@@ -36,14 +37,25 @@ class Canvas(tk.Frame):
 
     def create_frame(self, parent):
         size_slider = tk.Scale(parent, label='Object Size', from_=0, to=50, resolution=1, orient='horizontal', command=self.on_slide_size)
+        size_slider.set(SIZE)
         size_slider.pack()
-        mass_slider = tk.Scale(parent, label='Object Mass', from_=0, to=50, resolution=1, orient='horizontal', command=self.on_slide_mass)
+        mass_slider = tk.Scale(parent, label='Object Mass', from_=0, to=5000, resolution=10, orient='horizontal', command=self.on_slide_mass)
+        mass_slider.set(MASS)
         mass_slider.pack()
+        gravity_slider = tk.Scale(parent, label='Gravitaional Constant', from_=0, to=5000, resolution=10, orient='horizontal', command=self.on_slide_gravitationa_constant)
+        gravity_slider.set(G)
+        gravity_slider.pack()
 
     def on_slide_size(self, size):
         """Change object size and refresh object"""
         global SIZE
         SIZE = int(size)
+        self.draw_canvas()
+
+    def on_slide_gravitationa_constant(self, g):
+        """Change the gravitational constant"""
+        global G
+        G = int(g)
         self.draw_canvas()
 
     def on_slide_mass(self, mass):
@@ -56,9 +68,12 @@ class Canvas(tk.Frame):
         for item in Point.LIST_ARRAY:
             for point in item:
                 distance = self.get_distance(TARGET, point)
-                delta = distance - distance * 0.25 * MASS
-                self.canvas.create_text(TARGET.x + 60, TARGET.y, text=f"mass={MASS}" , font=("Purisa", 10), fill='white')
-                new_point = Point.Point(point.x + delta, point.y)
+                delta = G*MASS/distance**2
+                self.canvas.create_text(TARGET.x, TARGET.y + SIZE + 10, text=f"mass={MASS}" , font=("Purisa", 10), fill='white')
+                if point.x < TARGET.x:
+                    new_point = Point.Point(point.x + delta, point.y)
+                else:
+                    new_point = Point.Point(point.x - delta, point.y)
                 self.create_object(new_point, size=4)
 
     @staticmethod
