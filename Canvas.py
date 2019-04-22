@@ -5,8 +5,8 @@ import math
 INTERVAL = 25
 SIZE = 2
 MASS = 5
-G = 1000
-TARGET = Point.Point(400, 400)
+G = 10
+TARGET = Point.Point(Point.GRID_SIZE*Point.GRID_SEPARATION/2, Point.GRID_SIZE*Point.GRID_SEPARATION/2)
 
 class Canvas(tk.Frame):
     def __init__(self):
@@ -65,16 +65,25 @@ class Canvas(tk.Frame):
         self.draw_canvas()
 
     def test_gravity(self):
-        for item in Point.LIST_ARRAY:
-            for point in item:
-                distance = self.get_distance(TARGET, point)
-                delta = G*MASS/distance**2
-                self.canvas.create_text(TARGET.x, TARGET.y + SIZE + 10, text=f"mass={MASS}" , font=("Purisa", 10), fill='white')
-                if point.x < TARGET.x:
-                    new_point = Point.Point(point.x + delta, point.y)
-                else:
-                    new_point = Point.Point(point.x - delta, point.y)
-                self.create_object(new_point, size=4)
+        for point in Point.GRID:
+            distance = self.get_distance(TARGET, point)
+            distance = distance if distance != 0 else 1
+            delta = G*MASS/distance*2
+
+            if point.x < TARGET.x and point.y < TARGET.y:
+                new_point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
+                                        TARGET.y if point.y + delta > TARGET.y else point.y + delta)
+            elif point.x < TARGET.x and point.y > TARGET.y:
+                new_point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
+                                        TARGET.y if point.y - delta < TARGET.y else point.y - delta)
+            elif point.x > TARGET.x and point.y < TARGET.y:
+                new_point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
+                                        TARGET.y if point.y + delta > TARGET.y else point.y + delta)
+            else:
+                new_point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
+                                        TARGET.y if point.y - delta < TARGET.y else point.y - delta)
+
+            self.create_object(new_point, size=4)
 
     @staticmethod
     def get_distance(a, b):
