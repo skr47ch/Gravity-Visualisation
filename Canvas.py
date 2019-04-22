@@ -3,6 +3,7 @@ import Point
 import math
 
 INTERVAL = 25
+SIZE = 2
 MASS = 5
 TARGET = Point.Point(400, 400)
 
@@ -13,37 +14,65 @@ class Canvas(tk.Frame):
 
     def init_ui(self):
         self.pack(fill= 'both', expand= True)
-        self.canvas = tk.Canvas(self)
+
+        self.left_pane = tk.Frame(self, bg="green", width=200)
+        self.left_pane.pack(anchor='w', fill='y', expand=False, side='left')
+        self.create_frame(self.left_pane)
+
+        self.right_pane = tk.Canvas(self, bg="pink")
+        self.right_pane.pack(anchor='w', fill='both', expand=True, side='left')
+
+        self.canvas = tk.Canvas(self.right_pane)
         self.canvas.configure(background= 'black')
         self.canvas.pack(fill= 'both', expand= True)
 
         # self.create_coordinates()
+        self.draw_canvas()
+
+    def draw_canvas(self):
+        self.canvas.delete('all')
+        self.create_object()
         self.test_gravity()
-        self.create_point(TARGET, 'white', size=MASS*2)
+
+    def create_frame(self, parent):
+        size_slider = tk.Scale(parent, label='Object Size', from_=0, to=50, resolution=1, orient='horizontal', command=self.on_slide_size)
+        size_slider.pack()
+        mass_slider = tk.Scale(parent, label='Object Mass', from_=0, to=50, resolution=1, orient='horizontal', command=self.on_slide_mass)
+        mass_slider.pack()
+
+    def on_slide_size(self, size):
+        """Change object size and refresh object"""
+        global SIZE
+        SIZE = int(size)
+        self.draw_canvas()
+
+    def on_slide_mass(self, mass):
+        """Change object mass and refresh canvas"""
+        global MASS
+        MASS = int(mass)
+        self.draw_canvas()
 
     def test_gravity(self):
         for item in Point.LIST_ARRAY:
             for point in item:
-                num = 1
-                self.create_point(point, size=4)
                 distance = self.get_distance(TARGET, point)
-                delta = distance - distance * 0.25
-                # self.canvas.create_text(item.x + 60, item.y, text=f"d = {distance:.2f}, n={num}" , font=("Purisa", 10), fill='white')
+                delta = distance - distance * 0.25 * MASS
+                self.canvas.create_text(TARGET.x + 60, TARGET.y, text=f"mass={MASS}" , font=("Purisa", 10), fill='white')
                 new_point = Point.Point(point.x + delta, point.y)
-                self.create_point(new_point, 'blue', 4)
-                num += 1
-
+                self.create_object(new_point, size=4)
 
     @staticmethod
     def get_distance(a, b):
         return math.sqrt((a.x  - b.x)**2 + (a.y - b.y) ** 2)
 
-    def create_point(self, point, color= None, size= None):
+    def create_object(self, point= None, color= None, size= None):
         """Creates a Point on our canvas"""
+        if point is None:
+            point = TARGET
         if color is None:
             color = 'orange'
         if size is None:
-            size = 2
+            size = SIZE
 
         self.canvas.create_oval(point.x, point.y, (point.x + size), (point.y + size), fill= color)
 
@@ -55,14 +84,14 @@ class Canvas(tk.Frame):
 
         for y in range(int(screen_height / INTERVAL)):
             for x in range(int(screen_width / INTERVAL)):
-                self.create_point(Point.Point(x * INTERVAL, y * INTERVAL))
+                self.create_object(Point.Point(x * INTERVAL, y * INTERVAL))
 
 def main():
     root = tk.Tk()
     root.title('Gravity Visualisation')
     root.minsize(900, 800)
     root.update_idletasks()
-    example = Canvas()
+    Canvas()
     root.mainloop()
 
 if __name__ == '__main__':
