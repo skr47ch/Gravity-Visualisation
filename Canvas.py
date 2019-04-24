@@ -3,7 +3,7 @@ import Point
 import math
 
 INTERVAL = 25
-SIZE = 2
+SIZE = 10
 MASS = 5
 G = 10
 TARGET = Point.Point(Point.GRID_SIZE*Point.GRID_SEPARATION/2, Point.GRID_SIZE*Point.GRID_SEPARATION/2)
@@ -18,7 +18,7 @@ class Canvas(tk.Frame):
 
         self.left_pane = tk.Frame(self, width=200)
         self.left_pane.pack(anchor='w', fill='y', expand=False, side='left')
-        self.create_frame(self.left_pane)
+        self.create_control_panel(self.left_pane)
 
         self.right_pane = tk.Canvas(self, bg="pink")
         self.right_pane.pack(anchor='w', fill='both', expand=True, side='left')
@@ -35,8 +35,8 @@ class Canvas(tk.Frame):
         self.create_object()
         self.test_gravity()
 
-    def create_frame(self, parent):
-        size_slider = tk.Scale(parent, label='Object Size', from_=0, to=50, resolution=1, orient='horizontal', command=self.on_slide_size)
+    def create_control_panel(self, parent):
+        size_slider = tk.Scale(parent, label='Object Size', from_=0, to=100, resolution=1, orient='horizontal', command=self.on_slide_size)
         size_slider.set(SIZE)
         size_slider.pack()
         mass_slider = tk.Scale(parent, label='Object Mass', from_=0, to=5000, resolution=10, orient='horizontal', command=self.on_slide_mass)
@@ -70,20 +70,20 @@ class Canvas(tk.Frame):
             distance = distance if distance != 0 else 1
             delta = G*MASS/distance*2
 
-            if point.x < TARGET.x and point.y < TARGET.y:
+            if point.x <= TARGET.x and point.y <= TARGET.y:
                 new_point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
                                         TARGET.y if point.y + delta > TARGET.y else point.y + delta)
-            elif point.x < TARGET.x and point.y > TARGET.y:
+            elif point.x <= TARGET.x and point.y > TARGET.y:
                 new_point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
                                         TARGET.y if point.y - delta < TARGET.y else point.y - delta)
-            elif point.x > TARGET.x and point.y < TARGET.y:
+            elif point.x > TARGET.x and point.y <= TARGET.y:
                 new_point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
                                         TARGET.y if point.y + delta > TARGET.y else point.y + delta)
             else:
                 new_point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
                                         TARGET.y if point.y - delta < TARGET.y else point.y - delta)
-
-            self.create_object(new_point, size=4)
+            self.create_object(point, size=3, color='blue')
+            self.create_object(new_point, size=6, color='orange')
 
     @staticmethod
     def get_distance(a, b):
@@ -94,11 +94,15 @@ class Canvas(tk.Frame):
         if point is None:
             point = TARGET
         if color is None:
-            color = 'orange'
+            color = 'white'
         if size is None:
             size = SIZE
 
-        self.canvas.create_oval(point.x, point.y, (point.x + size), (point.y + size), fill= color)
+        object_ = self.canvas.create_oval(point.x - size/2, point.y - size/2, (point.x + size/2), (point.y + size/2), fill= color)
+        if point is None:
+            self.canvas.tag_raise(object_)
+        else:
+            self.canvas.tag_lower(object_)
 
     def create_coordinates(self):
         # get current window size
