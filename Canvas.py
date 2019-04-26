@@ -4,8 +4,12 @@ import math
 
 INTERVAL = 25
 SIZE = 10
+SIZE_MAX = 20
 MASS = 5
-G = 10
+MASS_MAX = 500
+G = 5
+G_MAX = 500
+
 TARGET = Point.Point(Point.GRID_SIZE*Point.GRID_SEPARATION/2, Point.GRID_SIZE*Point.GRID_SEPARATION/2)
 
 class Canvas(tk.Frame):
@@ -36,13 +40,13 @@ class Canvas(tk.Frame):
         self.test_gravity()
 
     def create_control_panel(self, parent):
-        size_slider = tk.Scale(parent, label='Object Size', from_=0, to=100, resolution=1, orient='horizontal', command=self.on_slide_size)
+        size_slider = tk.Scale(parent, label='Object Size', from_=0, to=SIZE_MAX, resolution=1, orient='horizontal', command=self.on_slide_size)
         size_slider.set(SIZE)
         size_slider.pack()
-        mass_slider = tk.Scale(parent, label='Object Mass', from_=0, to=5000, resolution=5, orient='horizontal', command=self.on_slide_mass)
+        mass_slider = tk.Scale(parent, label='Object Mass', from_=0, to=MASS_MAX, resolution=1, orient='horizontal', command=self.on_slide_mass)
         mass_slider.set(MASS)
         mass_slider.pack()
-        gravity_slider = tk.Scale(parent, label='Gravitaional Constant', from_=0, to=5000, resolution=5, orient='horizontal', command=self.on_slide_gravitationa_constant)
+        gravity_slider = tk.Scale(parent, label='Gravitaional Constant', from_=0, to=G_MAX, resolution=1, orient='horizontal', command=self.on_slide_gravitationa_constant)
         gravity_slider.set(G)
         gravity_slider.pack()
 
@@ -92,7 +96,7 @@ class Canvas(tk.Frame):
 
         for grid in new_grid:
             flatenned = [(x, y) for x, y in grid]
-            line_ = self.canvas.create_line(flatenned, smooth=True, width=1, fill='orange')
+            line_ = self.canvas.create_line(flatenned, smooth=True, width=1, fill='green')
             self.canvas.tag_lower(line_)
 
 
