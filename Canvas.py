@@ -65,25 +65,35 @@ class Canvas(tk.Frame):
         self.draw_canvas()
 
     def test_gravity(self):
-        for point in Point.GRID:
-            distance = self.get_distance(TARGET, point)
-            distance = distance if distance != 0 else 1
-            delta = G*MASS/distance*2
+        new_grid = []
+        for line in Point.GRID:
+            new_sub_grid = []
+            for point in line:
+                self.create_object(point, size=3, color='blue')
+                distance = self.get_distance(TARGET, point)
+                distance = distance if distance != 0 else 1
+                delta = G*MASS/distance*2
 
-            if point.x <= TARGET.x and point.y <= TARGET.y:
-                new_point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
-                                        TARGET.y if point.y + delta > TARGET.y else point.y + delta)
-            elif point.x <= TARGET.x and point.y > TARGET.y:
-                new_point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
-                                        TARGET.y if point.y - delta < TARGET.y else point.y - delta)
-            elif point.x > TARGET.x and point.y <= TARGET.y:
-                new_point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
-                                        TARGET.y if point.y + delta > TARGET.y else point.y + delta)
-            else:
-                new_point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
-                                        TARGET.y if point.y - delta < TARGET.y else point.y - delta)
-            self.create_object(point, size=3, color='blue')
-            self.create_object(new_point, size=6, color='orange')
+                if point.x <= TARGET.x and point.y <= TARGET.y:
+                    point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
+                                            TARGET.y if point.y + delta > TARGET.y else point.y + delta)
+                elif point.x <= TARGET.x and point.y > TARGET.y:
+                    point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
+                                            TARGET.y if point.y - delta < TARGET.y else point.y - delta)
+                elif point.x > TARGET.x and point.y <= TARGET.y:
+                    point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
+                                            TARGET.y if point.y + delta > TARGET.y else point.y + delta)
+                else:
+                    point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
+                                            TARGET.y if point.y - delta < TARGET.y else point.y - delta)
+
+                new_sub_grid.append(point)
+            new_grid.append(new_sub_grid)
+
+        for grid in new_grid:
+            flatenned = [(x, y) for x, y in grid]
+            self.canvas.create_line(flatenned, smooth=True, width=1, fill='orange')
+
 
     @staticmethod
     def get_distance(a, b):
