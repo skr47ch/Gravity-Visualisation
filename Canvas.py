@@ -39,10 +39,10 @@ class Canvas(tk.Frame):
         size_slider = tk.Scale(parent, label='Object Size', from_=0, to=100, resolution=1, orient='horizontal', command=self.on_slide_size)
         size_slider.set(SIZE)
         size_slider.pack()
-        mass_slider = tk.Scale(parent, label='Object Mass', from_=0, to=5000, resolution=10, orient='horizontal', command=self.on_slide_mass)
+        mass_slider = tk.Scale(parent, label='Object Mass', from_=0, to=5000, resolution=5, orient='horizontal', command=self.on_slide_mass)
         mass_slider.set(MASS)
         mass_slider.pack()
-        gravity_slider = tk.Scale(parent, label='Gravitaional Constant', from_=0, to=5000, resolution=10, orient='horizontal', command=self.on_slide_gravitationa_constant)
+        gravity_slider = tk.Scale(parent, label='Gravitaional Constant', from_=0, to=5000, resolution=5, orient='horizontal', command=self.on_slide_gravitationa_constant)
         gravity_slider.set(G)
         gravity_slider.pack()
 

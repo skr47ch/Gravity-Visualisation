@@ -3,7 +3,7 @@
 This project aims at a 3D Visualization of space time under effect of a mass.
 
 Current Progress - 
-![Progress_5](https://i.imgur.com/8NaCu5R.png)
+![Progress_5](https://i.imgur.com/ZU5aMUY.gif)
 
 Progress album @ ![Album](https://imgur.com/a/LH5veKq#e62CK2q)
 

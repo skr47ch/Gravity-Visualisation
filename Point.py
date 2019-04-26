@@ -1,22 +1,22 @@
 from collections import namedtuple
 
 Point = namedtuple('point', ['x', 'y'])
-GRID_SIZE = 20
-GRID_SEPARATION = 40
+GRID_SIZE = 24
+GRID_SEPARATION = 35
 
 GRID = []
 GRID_SUB = []
 
 # Grid 1 = All point in 2D space
-for y in range(1, GRID_SIZE):
+for y in range(0, GRID_SIZE):
     GRID_SUB = []
-    for x in range(1, GRID_SIZE):
+    for x in range(0, GRID_SIZE):
         GRID_SUB.append(Point(x*GRID_SEPARATION, y*GRID_SEPARATION))
     GRID.append(GRID_SUB)
 
-for y in range(1, GRID_SIZE):
+for y in range(0, GRID_SIZE):
     GRID_SUB = []
-    for x in range(1, GRID_SIZE):
+    for x in range(0, GRID_SIZE):
         GRID_SUB.append(Point(y*GRID_SEPARATION, x*GRID_SEPARATION))
     GRID.append(GRID_SUB)
 
