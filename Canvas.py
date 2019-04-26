@@ -69,7 +69,7 @@ class Canvas(tk.Frame):
         for line in Point.GRID:
             new_sub_grid = []
             for point in line:
-                self.create_object(point, size=3, color='blue')
+                # self.create_object(point, size=3, color='blue')
                 distance = self.get_distance(TARGET, point)
                 distance = distance if distance != 0 else 1
                 delta = G*MASS/distance*2
@@ -92,7 +92,8 @@ class Canvas(tk.Frame):
 
         for grid in new_grid:
             flatenned = [(x, y) for x, y in grid]
-            self.canvas.create_line(flatenned, smooth=True, width=1, fill='orange')
+            line_ = self.canvas.create_line(flatenned, smooth=True, width=1, fill='orange')
+            self.canvas.tag_lower(line_)
 
 
     @staticmethod

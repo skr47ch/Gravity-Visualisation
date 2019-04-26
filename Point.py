@@ -13,6 +13,13 @@ for y in range(1, GRID_SIZE):
     for x in range(1, GRID_SIZE):
         GRID_SUB.append(Point(x*GRID_SEPARATION, y*GRID_SEPARATION))
     GRID.append(GRID_SUB)
+
+for y in range(1, GRID_SIZE):
+    GRID_SUB = []
+    for x in range(1, GRID_SIZE):
+        GRID_SUB.append(Point(y*GRID_SEPARATION, x*GRID_SEPARATION))
+    GRID.append(GRID_SUB)
+
 print(GRID)
 
 
