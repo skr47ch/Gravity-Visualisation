@@ -1,19 +1,26 @@
-from matrix_transformations import *
-from plot_functions import *
-from math import *
+# from scipy.interpolate import make_interp_spline, BSpline
 import numpy as np
 import matplotlib.pyplot as plt
+from math import *
 
-plt.grid()
-plt.axis([0, 10, 0, 10])
+# TODO - Interpolation
+plt.axis([-10, 10, -10, 10])
+points = np.array([[5, 3],
+          [5, 2],
+          [5, 1],
+          [5, 0],
+          [5, -1],
+          [5, -2],
+          [5, -3]], dtype='f')
 
-x = 20
+origin = [0, 0]
 
-A = np.array([[2, 2],
-              [4, 4]])
-B = np.arange(10).reshape(5, 2)
-C = rotate_matrix_2d(matrix=A, angle_in_degree=x, clockwise=False)
+plt.plot(points[:, 0], points[:, 1])
 
-plot_multiple(A, C, B)
+for index, value in enumerate(points):
+    d = 5 * 1/sqrt(value[0]**2 + value[1]**2)
+    points[index] = [value[0]-d**2, value[1]]
+    print(d, points[index])
 
+plt.plot(points[:, 0], points[:, 1])
 plt.show()

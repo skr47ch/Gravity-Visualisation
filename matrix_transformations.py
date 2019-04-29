@@ -4,9 +4,9 @@ from math import *
 def rotate_matrix_2d(matrix, angle_in_degree, clockwise= False):
     """Rotation matrix for the 2d plane
         parameters -
-        matrix : a nX2 matrix
-        angle_in_degree : self explanatory
-        clockwise : rotation orientation. Anticlockwise by default
+            matrix : an NX2 matrix
+            angle_in_degree : self explanatory
+            clockwise : rotation orientation. Anticlockwise by default
 
        # TODO -  add code to rotate along a given point
     """
@@ -15,7 +15,7 @@ def rotate_matrix_2d(matrix, angle_in_degree, clockwise= False):
     angle = radians(angle_in_degree)
 
     rotation_matrix = np.array([[cos(angle), sin(angle)],
-                         [-sin(angle), cos(angle)]])
+                                [-sin(angle), cos(angle)]])
 
     return np.matmul(matrix, rotation_matrix)
 
