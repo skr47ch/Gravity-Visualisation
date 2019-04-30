@@ -5,22 +5,25 @@ from math import *
 
 # TODO - Interpolation
 plt.axis([-10, 10, -10, 10])
-points = np.array([[5, 3],
-          [5, 2],
-          [5, 1],
-          [5, 0],
-          [5, -1],
-          [5, -2],
-          [5, -3]], dtype='f')
-
 origin = [0, 0]
+# points = np.array([[x, y] for x in range(1, 6) for y in range(-20, 20, 1)], dtype='f')
 
-plt.plot(points[:, 0], points[:, 1])
+A = []
+for i in range(5):
+    A.append([[x, y] for x in range(i, i+1) for y in range(-9, 9)])
 
-for index, value in enumerate(points):
-    d = 5 * 1/sqrt(value[0]**2 + value[1]**2)
-    points[index] = [value[0]-d**2, value[1]]
-    print(d, points[index])
+points = np.array(A)
 
-plt.plot(points[:, 0], points[:, 1])
+for i in range(len(points)):
+    plt.plot(points[i, :, 0], points[i, :, 1])
+
+# for i in range(len(points)):
+#     for index, value in enumerate(points[i]):
+#         d = 1/sqrt(value[i, 0]**2 + value[i, 1]**2)
+#         points[i, index] = [value[i, 0]-d**2, value[i, 1]]
+#         print(d, points[i, index])
+
+for i in range(len(points)):
+    plt.plot(points[i, :, 0], points[i, :, 1])
+
 plt.show()
