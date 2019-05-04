@@ -10,7 +10,8 @@ MASS_MAX = 500
 G = 5
 G_MAX = 500
 
-TARGET = Point.Point(Point.GRID_SIZE*Point.GRID_SEPARATION/2, Point.GRID_SIZE*Point.GRID_SEPARATION/2)
+TARGET_1 = Point.Point(Point.GRID_SIZE * Point.GRID_SEPARATION / 2, Point.GRID_SIZE * Point.GRID_SEPARATION / 2)
+TARGET_2 = Point.Point(100, 100)
 
 class Canvas(tk.Frame):
     def __init__(self):
@@ -36,8 +37,9 @@ class Canvas(tk.Frame):
 
     def draw_canvas(self):
         self.canvas.delete('all')
-        self.create_object()
-        self.test_gravity()
+        for item in [TARGET_1, TARGET_2]:
+            self.create_object(item)
+            self.test_gravity(item)
 
     def create_control_panel(self, parent):
         size_slider = tk.Scale(parent, label='Object Size', from_=0, to=SIZE_MAX, resolution=1, orient='horizontal', command=self.on_slide_size)
@@ -68,28 +70,28 @@ class Canvas(tk.Frame):
         MASS = int(mass)
         self.draw_canvas()
 
-    def test_gravity(self):
+    def test_gravity(self, target):
         new_grid = []
         for line in Point.GRID:
             new_sub_grid = []
             for point in line:
                 # self.create_object(point, size=3, color='blue')
-                distance = self.get_distance(TARGET, point)
+                distance = self.get_distance(target, point)
                 distance = distance if distance != 0 else 1
                 delta = G*MASS/distance*2
 
-                if point.x <= TARGET.x and point.y <= TARGET.y:
-                    point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
-                                            TARGET.y if point.y + delta > TARGET.y else point.y + delta)
-                elif point.x <= TARGET.x and point.y > TARGET.y:
-                    point = Point.Point(TARGET.x if point.x + delta > TARGET.x else point.x + delta,
-                                            TARGET.y if point.y - delta < TARGET.y else point.y - delta)
-                elif point.x > TARGET.x and point.y <= TARGET.y:
-                    point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
-                                            TARGET.y if point.y + delta > TARGET.y else point.y + delta)
+                if point.x <= target.x and point.y <= target.y:
+                    point = Point.Point(target.x if point.x + delta > target.x else point.x + delta,
+                                            target.y if point.y + delta > target.y else point.y + delta)
+                elif point.x <= target.x and point.y > target.y:
+                    point = Point.Point(target.x if point.x + delta > target.x else point.x + delta,
+                                        target.y if point.y - delta < target.y else point.y - delta)
+                elif point.x > target.x and point.y <= target.y:
+                    point = Point.Point(target.x if point.x - delta < target.x else point.x - delta,
+                                        target.y if point.y + delta > target.y else point.y + delta)
                 else:
-                    point = Point.Point(TARGET.x if point.x - delta < TARGET.x else point.x - delta,
-                                            TARGET.y if point.y - delta < TARGET.y else point.y - delta)
+                    point = Point.Point(target.x if point.x - delta < target.x else point.x - delta,
+                                        target.y if point.y - delta < target.y else point.y - delta)
 
                 new_sub_grid.append(point)
             new_grid.append(new_sub_grid)
@@ -107,7 +109,7 @@ class Canvas(tk.Frame):
     def create_object(self, point= None, color= None, size= None):
         """Creates a Point on our canvas"""
         if point is None:
-            point = TARGET
+            point = TARGET_1
         if color is None:
             color = 'white'
         if size is None:
