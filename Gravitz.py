@@ -16,6 +16,8 @@ Point = namedtuple('point', ['x', 'y'])
 
 GRID = []
 GRID_SUB = []
+HORIONTAL_GRID = []
+VERTICAL_GRID = []
 
 # Grid 1 = All point in 2D space
 for y in range(0, GRID_SIZE):
@@ -23,12 +25,14 @@ for y in range(0, GRID_SIZE):
     for x in range(0, GRID_SIZE):
         GRID_SUB.append(Point(x*GRID_SEPARATION, y*GRID_SEPARATION))
     GRID.append(GRID_SUB)
+    HORIONTAL_GRID.append(GRID_SUB)
 
 for y in range(0, GRID_SIZE):
     GRID_SUB = []
     for x in range(0, GRID_SIZE):
         GRID_SUB.append(Point(y*GRID_SEPARATION, x*GRID_SEPARATION))
     GRID.append(GRID_SUB)
+    VERTICAL_GRID.append(GRID_SUB)
 
 class MassiveObject:
     def __init__(self, x, y, mass, color, size):
@@ -42,6 +46,8 @@ class MassiveObject:
 class AppWindow(tk.Frame):
     def __init__(self):
         super().__init__()
+        self.object_1 = MassiveObject(x=100, y=100, mass=5, color='white', size=5)
+        self.object_2 = MassiveObject(x=200, y=250, mass=5, color='yellow', size=8)
         self.gui()
     def gui(self):
         self.pack(fill= 'both', expand= True)
@@ -65,8 +71,8 @@ class AppWindow(tk.Frame):
         self.canvas.pack(fill= 'both', expand= True)
     def on_slide_size(self, size):
         """Change object size and refresh canvas"""
-        global SIZE
-        SIZE = int(size)
+        self.object_1.size = int(size)
+        self.object_2.size = int(size)
         self.refresh_canvas()
     def on_slide_gravitationa_constant(self, g):
         """Change the gravitational constant and refresh canvas"""
@@ -83,28 +89,24 @@ class AppWindow(tk.Frame):
         self.calculate_stuff()
 
     def calculate_stuff(self):
-        self.object_1 = MassiveObject(100, 100, 5, 'white', 5)
-        self.object_2 = MassiveObject(x=200, y=250, mass=5, color='yellow', size=8)
         self.draw_object(self.object_1)
-        self.draw_object_(self.object_2)
+        self.draw_object(self.object_2)
 
-    def draw_object_(self, object_):
+        # ToDo - Calculation and stuff to warp the points
+        self.draw_line()
+
+    def draw_object(self, object_):
         """Creates a Point on our canvas"""
         x_, y_ = object_.x, object_.y
         size = object_.size
         color = object_.color
         self.canvas.create_oval(x_-size/2, y_-size/2, x_+size/2, y_+size/2, fill= color)
 
-    def draw_object(self, point= None, color= None, size= None):
-        """Creates a Point on our canvas"""
-        if point is None:
-            point = Point(GRID_SIZE * GRID_SEPARATION / 2, GRID_SIZE * GRID_SEPARATION / 2)
-        if color is None:
-            color = 'white'
-        if size is None:
-            size = SIZE
-
-        self.canvas.create_oval(point.x - size/2, point.y - size/2, (point.x + size/2), (point.y + size/2), fill= color)
+    def draw_line(self):
+        for line_ in GRID:
+            flattened = [(x, y) for x, y in line_]
+            # self.canvas.create_line(flattened, fill='#145A32', smooth=1, width=3.3)
+            self.canvas.create_line(flattened, fill='#0B5345', smooth=1, width=2.2)
 
 
 root = tk.Tk()
