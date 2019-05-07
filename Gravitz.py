@@ -1,5 +1,7 @@
 import tkinter as tk
 from collections import namedtuple
+import math
+import numpy as np
 
 INTERVAL = 25
 SIZE = 10
@@ -46,8 +48,15 @@ class MassiveObject:
 class AppWindow(tk.Frame):
     def __init__(self):
         super().__init__()
+        self.object_list = []
         self.object_1 = MassiveObject(x=100, y=100, mass=5, color='white', size=5)
         self.object_2 = MassiveObject(x=200, y=250, mass=5, color='yellow', size=8)
+        self.object_3 = MassiveObject(x=500, y=500, mass=5, color='blue', size=5)
+        self.object_4 = MassiveObject(x=700, y=400, mass=5, color='magenta', size=5)
+        self.object_list.append(self.object_1)
+        self.object_list.append(self.object_2)
+        self.object_list.append(self.object_3)
+        self.object_list.append(self.object_4)
         self.gui()
     def gui(self):
         self.pack(fill= 'both', expand= True)
@@ -69,44 +78,79 @@ class AppWindow(tk.Frame):
         self.canvas = tk.Canvas(self.right_pane)
         self.canvas.configure(background= 'black')
         self.canvas.pack(fill= 'both', expand= True)
+
     def on_slide_size(self, size):
         """Change object size and refresh canvas"""
-        self.object_1.size = int(size)
-        self.object_2.size = int(size)
+        for object_ in self.object_list:
+            object_.size = int(size)
         self.refresh_canvas()
+
     def on_slide_gravitationa_constant(self, g):
         """Change the gravitational constant and refresh canvas"""
         global G
         G = int(g)
         self.refresh_canvas()
+
     def on_slide_mass(self, mass):
         """Change object mass and refresh canvas"""
         global MASS
         MASS = int(mass)
         self.refresh_canvas()
+
     def refresh_canvas(self):
         self.canvas.delete('all')
         self.calculate_stuff()
 
     def calculate_stuff(self):
-        self.draw_object(self.object_1)
-        self.draw_object(self.object_2)
 
-        # ToDo - Calculation and stuff to warp the points
-        self.draw_line()
+        GRID_LOCAL = VERTICAL_GRID.copy()
+
+        for object_ in self.object_list:
+            self.draw_object(object_)
+
+        for object_ in self.object_list:
+            for index_1, line_ in enumerate(GRID_LOCAL):
+                for index_2, point_ in enumerate(line_):
+                    # print(object_.coordinates, point_, self.get_distance(object_, point_), GRID[index_1][index_2])
+                    distance = self.get_distance(object_, point_)
+                    distance = distance if distance != 0 else 1
+
+                    delta = G*MASS/distance*2
+
+                    if point_.x <= object_.x and point_.y <= object_.y:
+                        GRID_LOCAL[index_1][index_2] = Point(object_.x if point_.x + delta > object_.x else point_.x + delta,
+                                                object_.y if point_.y + delta > object_.y else point_.y + delta)
+                    elif point_.x <= object_.x and point_.y > object_.y:
+                        GRID_LOCAL[index_1][index_2] = Point(object_.x if point_.x + delta > object_.x else point_.x + delta,
+                                            object_.y if point_.y - delta < object_.y else point_.y - delta)
+                    elif point_.x > object_.x and point_.y <= object_.y:
+                        GRID_LOCAL[index_1][index_2] = Point(object_.x if point_.x - delta < object_.x else point_.x - delta,
+                                            object_.y if point_.y + delta > object_.y else point_.y + delta)
+                    else:
+                        GRID_LOCAL[index_1][index_2] = Point(object_.x if point_.x - delta < object_.x else point_.x - delta,
+                                            object_.y if point_.y - delta < object_.y else point_.y - delta)
+
+        self.draw_line(GRID_LOCAL)
 
     def draw_object(self, object_):
         """Creates a Point on our canvas"""
         x_, y_ = object_.x, object_.y
         size = object_.size
         color = object_.color
-        self.canvas.create_oval(x_-size/2, y_-size/2, x_+size/2, y_+size/2, fill= color)
+        obj = self.canvas.create_oval(x_-size/2, y_-size/2, x_+size/2, y_+size/2, fill= color)
+        self.canvas.tag_raise(obj)
 
-    def draw_line(self):
-        for line_ in GRID:
+    def draw_line(self, grid):
+        for line_ in grid:
             flattened = [(x, y) for x, y in line_]
-            # self.canvas.create_line(flattened, fill='#145A32', smooth=1, width=3.3)
-            self.canvas.create_line(flattened, fill='#0B5345', smooth=1, width=2.2)
+            line_bg = self.canvas.create_line(flattened, fill='#145A32', smooth=1, width=2.4)
+            line = self.canvas.create_line(flattened, fill='#0B5345', smooth=1, width=2.1)
+            self.canvas.tag_lower(line)
+            self.canvas.tag_lower(line_bg)
+
+    @staticmethod
+    def get_distance(a, b):
+        return math.sqrt((a.x  - b.x)**2 + (a.y - b.y) ** 2)
 
 
 root = tk.Tk()
